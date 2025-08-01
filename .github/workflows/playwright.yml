@@ -6,6 +6,13 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      ALLURE_USERNAME:
+        description: 'User triggering the run'
+        required: false
+        default: 'github'
+
 
 jobs:
   test:
