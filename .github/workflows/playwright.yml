@@ -20,6 +20,8 @@ jobs:
         run: npm ci
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
+      - name: Set up allurectl
+        uses: allure-framework/setup-allurectl@v1
       - name: Run Playwright tests
         run: npm test
       - name: Get Allure history
@@ -37,23 +39,14 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           allure_report_path: allure-report
 
-      # Upload Allure results to GitHub Artifacts (Optional, but good for debugging)
-      - name: Upload Allure Results Artifact
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-results
-          path: allure-results
-
-      # New step for Allure TestOps
       - name: Upload results to Allure TestOps
-        uses: allure-testops/github-action@v2
-        with:
-          allure_results: allure-results
-          allure_endpoint: https://mypocproject.testops.cloud/
-          allure_token: ${{ secrets.ALLURE_TOKEN }}
-          project_id: 1 # Replace with your project ID
-          # Optional: You can specify a test plan ID, launch name, etc.
-          # test_plan_id: your-test-plan-id
-          launch_name: Playwright CI Run ${{ github.run_number }}
-          job_run_id: ${{ github.run_id }}
+        run: allurectl upload allure-results # This command uploads the results
+        env:
+          ALLURE_ENDPOINT: https://mypocproject.testops.cloud/
+          ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
+          ALLURE_PROJECT_ID: 1
+          # Optional: Additional environment variables for allurectl
+          ALLURE_LAUNCH_NAME: Playwright CI Run ${{ github.run_number }}
+          # ALLURE_LAUNCH_TAGS: CI, Playwright, GitHubActions
+          # ALLURE_LAUNCH_RGX: ".*" # Regex for test cases to include in launch
+          ALLURE_JOB_RUN_ID: ${{ github.run_id }} # Important for linking with TestOps jobs
