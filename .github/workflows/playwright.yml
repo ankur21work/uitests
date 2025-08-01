@@ -24,14 +24,6 @@ jobs:
         uses: allure-framework/setup-allurectl@v1
       - name: Run Playwright tests
         run: npm test
-      - name: Build Allure Report
-        uses: simple-elf/allure-report-action@v1.9
-        id: allure-report
-        with:
-          allure_results: allure-results
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          allure_report_path: allure-report
-
       - name: Upload results to Allure TestOps
         run: allurectl upload allure-results # This command uploads the results
         env:
@@ -39,7 +31,7 @@ jobs:
           ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
           ALLURE_PROJECT_ID: 1
           # Optional: Additional environment variables for allurectl
-          ALLURE_LAUNCH_NAME: Playwright CI Run ${{ github.run_number }}
+          ALLURE_LAUNCH_NAME: UITests CI Run ${{ github.run_number }}
           # ALLURE_LAUNCH_TAGS: CI, Playwright, GitHubActions
           # ALLURE_LAUNCH_RGX: ".*" # Regex for test cases to include in launch
           ALLURE_JOB_RUN_ID: ${{ github.run_id }} # Important for linking with TestOps jobs
