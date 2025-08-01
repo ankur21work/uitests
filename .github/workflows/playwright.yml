@@ -41,4 +41,4 @@ jobs:
           ALLURE_LAUNCH_NAME: UITests CI Run ${{ github.run_number }}
           # ALLURE_LAUNCH_TAGS: CI, Playwright, GitHubActions
           # ALLURE_LAUNCH_RGX: ".*" # Regex for test cases to include in launch
-          ALLURE_JOB_RUN_ID: ${{ github.run_id }} # Important for linking with TestOps jobs
+          # ALLURE_JOB_RUN_ID: ${{ github.run_id }} # Important for linking with TestOps jobs
