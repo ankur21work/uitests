@@ -1,0 +1,59 @@
+# .github/workflows/playwright.yml
+name: Playwright Tests and Allure Report
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install dependencies
+        run: npm ci
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+      - name: Run Playwright tests
+        run: npm test
+      - name: Get Allure history
+        uses: actions/checkout@v4
+        with:
+          ref: allure-history
+          path: allure-history
+          fetch-depth: 0
+      - name: Build Allure Report
+        uses: simple-elf/allure-report-action@v1.9
+        id: allure-report
+        with:
+          allure_results: allure-results
+          allure_history: allure-history
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          allure_report_path: allure-report
+
+      # Upload Allure results to GitHub Artifacts (Optional, but good for debugging)
+      - name: Upload Allure Results Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results
+
+      # New step for Allure TestOps
+      - name: Upload results to Allure TestOps
+        uses: allure-testops/github-action@v2
+        with:
+          allure_results: allure-results
+          allure_endpoint: https://mypocproject.testops.cloud/
+          allure_token: ${{ secrets.ALLURE_TOKEN }}
+          project_id: 1 # Replace with your project ID
+          # Optional: You can specify a test plan ID, launch name, etc.
+          # test_plan_id: your-test-plan-id
+          launch_name: Playwright CI Run ${{ github.run_number }}
+          job_run_id: ${{ github.run_id }}
