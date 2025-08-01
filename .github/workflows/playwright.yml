@@ -24,18 +24,11 @@ jobs:
         uses: allure-framework/setup-allurectl@v1
       - name: Run Playwright tests
         run: npm test
-      - name: Get Allure history
-        uses: actions/checkout@v4
-        with:
-          ref: allure-history
-          path: allure-history
-          fetch-depth: 0
       - name: Build Allure Report
         uses: simple-elf/allure-report-action@v1.9
         id: allure-report
         with:
           allure_results: allure-results
-          allure_history: allure-history
           github_token: ${{ secrets.GITHUB_TOKEN }}
           allure_report_path: allure-report
 
